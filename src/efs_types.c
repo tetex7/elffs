@@ -12,7 +12,7 @@
 #include <elffs/efs_types.h>
 
 static const char* name_tp[] = {
-    [EFS_ENTRY_TYPE_EMPTY] = "EFS_ENTRY_TYPE_EMPTY",
+    [EFS_ENTRY_TYPE_NONE] = "EFS_ENTRY_TYPE_NONE",
     [EFS_ENTRY_TYPE_BLOB] = "EFS_ENTRY_TYPE_BLOB",
     [EFS_ENTRY_TYPE_CLUSTER] = "EFS_ENTRY_TYPE_CLUSTER",
 };

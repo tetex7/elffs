@@ -21,14 +21,18 @@
 
 typedef struct elffs_manager_s
 {
-    uint8_t* start;
-    uint8_t* end;
+    const uint8_t* start;
+    const uint8_t* end;
     efs_header_t* header;
     const char* blob_name_ref;
     efs_entry_t* entries;
-    uint8_t* blob_start;
-    uint8_t* blob_end;
+    const uint8_t* blob_start;
+    const uint8_t* blob_end;
 } *elffs_manager_o, elffs_manager_t;
+
+ELFFS_RT_API elffs_manager_o elffs_manager_new(const uint8_t start[], const uint8_t end[]);
+ELFFS_RT_API void elffs_manager_distroy(elffs_manager_o self);
+
 
 ELFFS_RT_API elffs_manager_o elffs_get_manager();
 ELFFS_RT_API efs_header_t* elffs_manager_getHeader(elffs_manager_o self);
@@ -38,6 +42,8 @@ ELFFS_RT_API efs_entry_t* elffs_manager_getEntryByName(elffs_manager_o self, con
 ELFFS_RT_API efs_uid_o elffs_manager_getUIDByFileName(elffs_manager_o self, const char* name);
 ELFFS_RT_API efs_entry_t* elffs_manager_getEntries(elffs_manager_o self);
 ELFFS_RT_API efs_bool_t elffs_manager_fileExists(elffs_manager_o self, const char* name);
+ELFFS_RT_API efs_size_t elffs_manager_getEntriesNameList(elffs_manager_o self, const char* list[], size_t len, efs_entry_type_t type);
+
 ELFFS_RT_API FILE* elffs_manager_fopen(elffs_manager_o self, const char* filename);
 
 #endif //ELFFS_ELFFS_MANAGER_H

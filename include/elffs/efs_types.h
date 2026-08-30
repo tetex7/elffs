@@ -49,7 +49,7 @@ typedef struct ELFFS_NO_IMPLICIT_PADDING efs_elf_object_header_s
 
 enum efs_entry_type_e
 {
-    EFS_ENTRY_TYPE_EMPTY = 0,
+    EFS_ENTRY_TYPE_NONE = 0,
     EFS_ENTRY_TYPE_BLOB,
     EFS_ENTRY_TYPE_CLUSTER,
 };
