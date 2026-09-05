@@ -22,12 +22,15 @@ class EfsFile final
 {
 private:
     mutable std::ifstream ifs;
+    const std::filesystem::path archive_path;
 
     std::size_t fileSize;
     efs_header_t header;
     std::vector<efs_entry_t> entries;
 public:
     explicit EfsFile(const std::filesystem::path& file_name);
+
+    explicit EfsFile(const EfsFile& file);
 
     const std::vector<efs_entry_t>& getEntries() const;
     const efs_header_t& getHeader() const;

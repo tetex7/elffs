@@ -34,6 +34,7 @@ int EfsListFilesSubProgram::sub_program_main()
     std::println("entry: {}", efs_header.num_entry);
     std::println("offset to blob: {}", efs_header.offset_to_blob);
     std::println("blob size: {}", efs_header.blob_size);
+    std::println("efs version: {{{:02X}-{:04X}-{:02X}}}", efs_header.blob_version.prefix, efs_header.blob_version.body, efs_header.blob_version.suffix);
 
     std::println("\n");
     for (const auto& entry : file.getEntries())
@@ -46,7 +47,7 @@ int EfsListFilesSubProgram::sub_program_main()
         std::println("size: {}", entry.size);
         std::println("type: {}", efs_entry_type_to_string(entry.type));
         std::println("offset: {}", entry.offset);
-        std::println("UID: {{{:X}-{:X}-{:X}}}", entry.uid.prefix, entry.uid.body, entry.uid.suffix);
+        std::println("UID: {{{:02X}-{:04X}-{:02X}}}", entry.uid.prefix, entry.uid.body, entry.uid.suffix);
         std::println("");
     }
     //CLUSTER

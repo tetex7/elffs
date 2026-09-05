@@ -6,5 +6,5 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 #
 
-add_library(libelffs_rt STATIC ${MASTR_INC}/elffs/rt/elffs_manager.h elffs_manager.c)
+add_library(libelffs_rt STATIC ${MASTR_INC}/elffs/rt/rt_manager.h rt_manager.c)
 target_link_libraries(libelffs_rt PUBLIC libelffs)

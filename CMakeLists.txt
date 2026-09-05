@@ -55,7 +55,10 @@ add_library(libelffs SHARED
         src/efs_uid.c
         include/elffs/efs_uid.h
         src/efs_types.c
-        include/elffs/efs_int_types.h)
+        include/elffs/efs_int_types.h
+        include/elffs/elffs_manager.h
+        src/elffs_manager.c
+)
 enable_api_ctl(libelffs)
 target_compile_definitions(libelffs PRIVATE ELFFS_EXPORTS)
 target_include_directories(libelffs PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)

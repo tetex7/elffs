@@ -47,8 +47,6 @@ void EfsPackerSubProgram::getFileBlob(std::vector<std::uint8_t>& fileblob, std::
 
         // Offset points to the location within the file blob section
         efs_entry.offset = fileblob.size();
-        efs_entry.pad1 = EFS_PAD_VALUE;
-        efs_entry.pad2 = EFS_PAD_VALUE;
         efs_uid_random(&efs_entry.uid);
 
         if (entry.is_directory())
@@ -91,12 +89,10 @@ void EfsPackerSubProgram::pack(const std::string& blob_name, const std::string& 
             EFS_MAGIC_BYTE_3,
         },
         "com.trs.test",
-        EFS_PAD_VALUE,
         0,
         0,
         0,
-        EFS_CURRENT_VERSION,
-        EFS_PAD_VALUE
+        EFS_CURRENT_VERSION
     };
 
     if (blob_name.size() >= EFS_BLOB_NAME_MAX)
@@ -129,7 +125,7 @@ void EfsPackerSubProgram::pack(const std::string& blob_name, const std::string& 
         std::println("size: {}", entry.size);
         std::println("type: {}", efs_entry_type_to_string(entry.type));
         std::println("offset: {}", entry.offset);
-        std::println("UID: {{{:X}-{:X}-{:X}}}", entry.uid.prefix, entry.uid.body, entry.uid.suffix);
+        std::println("UID: {{{:02X}-{:04X}-{:02X}}}", entry.uid.prefix, entry.uid.body, entry.uid.suffix);
         std::println("");
     }
 

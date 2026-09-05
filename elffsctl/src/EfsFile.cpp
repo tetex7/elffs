@@ -4,7 +4,7 @@
 
 #include "EfsFile.hpp"
 
-EfsFile::EfsFile(const std::filesystem::path& file_name) : ifs(file_name, std::ios::binary), header()
+EfsFile::EfsFile(const std::filesystem::path& file_name) : ifs(file_name, std::ios::binary), archive_path(file_name), header()
 {
     constexpr std::array<char, EFS_MAGIC_LEN> currect = {
         EFS_MAGIC_BYTE_0,
@@ -41,6 +41,8 @@ EfsFile::EfsFile(const std::filesystem::path& file_name) : ifs(file_name, std::i
     }
     ifs.seekg(0, std::ios::beg);
 }
+
+EfsFile::EfsFile(const EfsFile& file) : EfsFile(file.archive_path) {}
 
 const std::vector<efs_entry_t>& EfsFile::getEntries() const
 {

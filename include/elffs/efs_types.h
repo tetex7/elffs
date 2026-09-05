@@ -62,23 +62,19 @@ typedef struct ELFFS_NO_IMPLICIT_PADDING efs_header_s
 {
     char magic[EFS_MAGIC_LEN];
     char blob_name[EFS_BLOB_NAME_MAX];
-    efs_byte_t pad1;
     efs_size_t num_entry;
     efs_size_t offset_to_blob;
     efs_size_t blob_size;
     efs_uid_t blob_version;
-    efs_byte_t pad2;
 } efs_header_t;
 
 typedef struct ELFFS_NO_IMPLICIT_PADDING efs_entry_s
 {
     char name[EFS_ENTRY_PATH_MAX];
-    efs_byte_t pad1;
     efs_entry_type_t type;
     efs_uid_t uid;
     efs_size_t size;
     efs_size_t offset;
-    efs_byte_t pad2;
 } efs_entry_t;
 
 ELFFS_END_CPP_COMPAT

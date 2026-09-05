@@ -10,20 +10,20 @@
 // Created by tete on 8/28/26.
 //
 
-#include <elffs/rt/elffs_manager.h>
+#include <elffs/rt/rt_manager.h>
 
 int main(int argc, char* argv[])
 {
-    elffs_manager_o manager = elffs_get_manager();
+    elffs_manager_o manager = elffs_get_global_manager();
 
     FILE* f = elffs_manager_fopen(manager, "/dir/test.txt");
 
-    efs_uid_o uid = elffs_manager_getUIDByFileName(manager, "/test44.txt");
+    const efs_uid_o uid = elffs_manager_getUIDByFileName(manager, "/test44.txt");
 
-    size_t len = elffs_manager_getEntriesNameList(manager, NULL, 0, EFS_ENTRY_TYPE_NONE);
+    const size_t len = elffs_manager_getEntriesNameList(manager, NULL, 0);
 
     const char* list[len];
-    elffs_manager_getEntriesNameList(manager, list, len, EFS_ENTRY_TYPE_NONE);
+    elffs_manager_getEntriesNameList(manager, list, len);
 
     for (size_t i = 0; i < len; i++)
     {

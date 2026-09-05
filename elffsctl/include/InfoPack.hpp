@@ -23,6 +23,7 @@ struct InfoPack
     std::string output_file;
     std::string blob_name;
     std::string pack_dir;
+    std::string efs_path;
     std::optional<std::reference_wrapper<po::variables_map>> vm;
 };
 

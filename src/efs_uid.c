@@ -15,6 +15,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 bool efs_uid_from_ui32(efs_uid_o uid, uint32_t value)
@@ -58,7 +59,7 @@ bool efs_uid_random(efs_uid_o uid)
     close(ra);
 #else
     const uint32_t r = rand();
-    memcpy(&uid, &r, sizeof(efs_uid_t));
+    efs_uid_from_ui32(uid, r);
 #endif
     return true;
 
@@ -78,7 +79,16 @@ efs_uid_o efs_uid_copy(efs_uid_o uid, efs_uid_o out)
     return out;
 }
 
-uint16_t efs_uid_as_string(char *buff, size_t len, efs_uid_o uid)
+uint16_t efs_uid_as_string(char* buff, size_t len, efs_uid_o uid)
 {
-    return 0;
+    if (!buff || len < 11 || !uid) {
+        return 0;
+    }
+
+    int written = snprintf(buff, len, "{%02X-%04X-%02X}",
+                           uid->prefix,
+                           uid->body,
+                           uid->suffix);
+
+    return (written > 0 && (size_t)written < len) ? (uint16_t)written : 0;
 }

@@ -36,6 +36,7 @@ void EfsObjectFileSubProgram::write_elf_object(const std::string& filename, cons
     };
     uint32_t sym_start_name = add_str("_efs_data_bin_start");
     uint32_t sym_end_name   = add_str("_efs_data_bin_end");
+    uint32_t sym_size_name   = add_str("_efs_data_bin_size");
 
     // 2. Build Symbol Table (.symtab)
     // Index 0 is always null
@@ -69,11 +70,22 @@ void EfsObjectFileSubProgram::write_elf_object(const std::string& filename, cons
     sym_end.st_size  = 0;
     symtab.push_back(sym_end);
 
+    Elf64_Sym sym_size{};
+    sym_size.st_name = sym_size_name;
+    sym_size.st_info = ELF64_ST_INFO(STB_GLOBAL, STT_OBJECT);
+    sym_size.st_other = ELF64_ST_VISIBILITY(STV_HIDDEN);
+    sym_size.st_shndx = EFS_SHNDX;
+    sym_size.st_value = payload.size();
+    sym_size.st_size  = sizeof(efs_size_t);
+    symtab.push_back(sym_size);
+
+
     // 3. Calculate Layout Offsets
     uint64_t offset = sizeof(Elf64_Ehdr);
 
     uint64_t efs_offset = offset;
     offset += payload.size();
+    offset += sizeof(efs_size_t);
 
     uint64_t symtab_offset = offset;
     offset += symtab.size() * sizeof(Elf64_Sym);
@@ -117,7 +129,7 @@ void EfsObjectFileSubProgram::write_elf_object(const std::string& filename, cons
     shdrs[EFS_SHNDX].sh_type      = SHT_PROGBITS;
     shdrs[EFS_SHNDX].sh_flags     = SHF_ALLOC;
     shdrs[EFS_SHNDX].sh_offset    = efs_offset;
-    shdrs[EFS_SHNDX].sh_size      = payload.size();
+    shdrs[EFS_SHNDX].sh_size      = payload.size()+sizeof(efs_size_t);
     shdrs[EFS_SHNDX].sh_addralign = 8;
 
     // Section 2: .symtab
@@ -144,9 +156,12 @@ void EfsObjectFileSubProgram::write_elf_object(const std::string& filename, cons
     shdrs[SHSTRTAB_SHNDX].sh_size      = shstrtab.size();
     shdrs[SHSTRTAB_SHNDX].sh_addralign = 1;
 
+    efs_size_t z = payload.size();
+
     // 6. Write File Structure to Disk
     file.write(reinterpret_cast<const char*>(&ehdr), sizeof(ehdr));
     file.write(reinterpret_cast<const char*>(payload.data()), payload.size());
+    file.write(reinterpret_cast<const char*>(&z), sizeof(efs_size_t));
     file.write(reinterpret_cast<const char*>(symtab.data()), symtab.size() * sizeof(Elf64_Sym));
     file.write(strtab.data(), strtab.size());
     file.write(shstrtab.data(), shstrtab.size());
