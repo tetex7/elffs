@@ -39,6 +39,8 @@ ELFFS_API bool efs_uid_random(efs_uid_o uid);
 
 ELFFS_API efs_uid_o efs_uid_copy(efs_uid_o uid, efs_uid_o out);
 
+ELFFS_API efs_uid_o efs_uid_from_string_hash(efs_uid_o out, const char* string);
+
 ELFFS_API uint16_t efs_uid_as_string(char* buff, size_t len, efs_uid_o uid);
 
 ELFFS_END_CPP_COMPAT

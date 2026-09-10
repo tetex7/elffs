@@ -34,3 +34,5 @@ target_link_libraries(elffsctl PRIVATE libelffs)
 
 find_package(Boost REQUIRED COMPONENTS program_options)
 target_link_libraries(elffsctl PRIVATE Boost::program_options)
+
+install(TARGETS elffsctl DESTINATION bin)

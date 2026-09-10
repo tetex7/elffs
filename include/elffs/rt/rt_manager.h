@@ -14,6 +14,10 @@
 #define ELFFS_RT_MANAGER_H
 #include <elffs/elffs_manager.h>
 
+ELFFS_BEGIN_CPP_COMPAT
+
 ELFFS_RT_API elffs_manager_o elffs_get_global_manager();
+
+ELFFS_END_CPP_COMPAT
 
 #endif //ELFFS_RT_MANAGER_H

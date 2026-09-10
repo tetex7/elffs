@@ -11,6 +11,10 @@
 //
 
 #include <elffs/rt/rt_manager.h>
+#include <elffs/efs_path_utils.h>
+
+#include <stdlib.h>
+#include <string.h>
 
 int main(int argc, char* argv[])
 {
@@ -37,4 +41,10 @@ int main(int argc, char* argv[])
         putchar(c);
     }
     fclose(f);
+
+    putchar('\n');
+    putchar('\n');
+    efs_path_lookup_pair_t pair = {};
+    efs_mb_path_split(&pair, "com.test.cp:/test/44.txt");
+    printf("\"%s\"@\"%s\"\n", pair.path, pair.blob);
 }

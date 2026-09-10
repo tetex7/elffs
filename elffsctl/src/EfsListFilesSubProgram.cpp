@@ -31,6 +31,8 @@ int EfsListFilesSubProgram::sub_program_main()
     std::size_t cluster_num = 0;
 
     std::println("blob name: {}", efs_header.blob_name);
+    std::println("marking UID: {{{:02X}-{:04X}-{:02X}}}", efs_header.marking.prefix, efs_header.marking.body, efs_header.marking.suffix);
+    std::println("efs version: {{{:02X}-{:04X}-{:02X}}}", efs_header.blob_version.prefix, efs_header.blob_version.body, efs_header.blob_version.suffix);
     std::println("entry: {}", efs_header.num_entry);
     std::println("offset to blob: {}", efs_header.offset_to_blob);
     std::println("blob size: {}", efs_header.blob_size);

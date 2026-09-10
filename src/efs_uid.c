@@ -18,7 +18,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-bool efs_uid_from_ui32(efs_uid_o uid, uint32_t value)
+ELFFS_API bool efs_uid_from_ui32(efs_uid_o uid, uint32_t value)
 {
     if (uid == NULL)
         return false;
@@ -27,7 +27,7 @@ bool efs_uid_from_ui32(efs_uid_o uid, uint32_t value)
     return true;
 }
 
-bool efs_uid_cmp(efs_uid_o uid, efs_uid_o other)
+ELFFS_API bool efs_uid_cmp(efs_uid_o uid, efs_uid_o other)
 {
     if (uid == NULL || other == NULL)
         return false;
@@ -40,7 +40,7 @@ bool efs_uid_cmp(efs_uid_o uid, efs_uid_o other)
     );
 }
 
-bool efs_uid_random(efs_uid_o uid)
+ELFFS_API bool efs_uid_random(efs_uid_o uid)
 {
     if (uid == NULL)
         return false;
@@ -65,7 +65,7 @@ bool efs_uid_random(efs_uid_o uid)
 
 }
 
-efs_uid_o efs_uid_copy(efs_uid_o uid, efs_uid_o out)
+ELFFS_API efs_uid_o efs_uid_copy(efs_uid_o uid, efs_uid_o out)
 {
     if (uid == NULL || out == NULL)
         return NULL;
@@ -79,7 +79,24 @@ efs_uid_o efs_uid_copy(efs_uid_o uid, efs_uid_o out)
     return out;
 }
 
-uint16_t efs_uid_as_string(char* buff, size_t len, efs_uid_o uid)
+ELFFS_API efs_uid_o efs_uid_from_string_hash(efs_uid_o out, const char* string)
+{
+    if (out == NULL || string == NULL)
+        return NULL;
+
+    uint32_t hash = 2166136261U;
+
+    while (*string)
+    {
+        hash ^= (unsigned char)*string++;
+        hash *= 16777619U;
+    }
+
+    efs_uid_from_ui32(out, hash);
+    return out;
+}
+
+ELFFS_API uint16_t efs_uid_as_string(char* buff, size_t len, efs_uid_o uid)
 {
     if (!buff || len < 11 || !uid) {
         return 0;

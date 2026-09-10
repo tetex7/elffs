@@ -10,12 +10,12 @@
 // Created by tete on 8/29/26.
 //
 #define _POSIX_C_SOURCE 200809L // NOLINT(*-reserved-identifier)
+#include <stdio.h>
+#undef _POSIX_C_SOURCE
+
 #include <stdlib.h>
 #include <string.h>
 #include <elffs/elffs_manager.h>
-
-
-
 
 ELFFS_API elffs_manager_o elffs_manager_new(const uint8_t start[], const uint8_t end[])
 {

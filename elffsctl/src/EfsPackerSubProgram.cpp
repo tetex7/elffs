@@ -47,7 +47,7 @@ void EfsPackerSubProgram::getFileBlob(std::vector<std::uint8_t>& fileblob, std::
 
         // Offset points to the location within the file blob section
         efs_entry.offset = fileblob.size();
-        efs_uid_random(&efs_entry.uid);
+        efs_uid_from_string_hash(&efs_entry.uid, efs_entry.name);
 
         if (entry.is_directory())
         {
@@ -92,8 +92,25 @@ void EfsPackerSubProgram::pack(const std::string& blob_name, const std::string& 
         0,
         0,
         0,
-        EFS_CURRENT_VERSION
+        EFS_CURRENT_VERSION,
+        {0, 0, 0}
     };
+
+
+    const char* user = std::getenv("USER");
+    if (!user)
+        throw std::runtime_error("User environment variable not set");
+
+    const char* home = std::getenv("HOME");
+    if (!home)
+    {
+        throw std::runtime_error("Home environment variable not set");
+    }
+
+    std::string pre_marking = user;
+    pre_marking += home;
+
+    efs_uid_from_string_hash(&efs_header.marking, pre_marking.c_str());
 
     if (blob_name.size() >= EFS_BLOB_NAME_MAX)
     {
@@ -114,6 +131,8 @@ void EfsPackerSubProgram::pack(const std::string& blob_name, const std::string& 
     efs_header.blob_size = fileblob.size();
 
     std::println("blob name: {}", efs_header.blob_name);
+    std::println("marking UID: {{{:02X}-{:04X}-{:02X}}}", efs_header.marking.prefix, efs_header.marking.body, efs_header.marking.suffix);
+    std::println("efs version: {{{:02X}-{:04X}-{:02X}}}", efs_header.blob_version.prefix, efs_header.blob_version.body, efs_header.blob_version.suffix);
     std::println("entry: {}",  static_cast<std::size_t>(efs_header.num_entry));
     std::println("offset to blob: {}", static_cast<std::size_t>(efs_header.offset_to_blob));
     std::println("file blob size: {}", static_cast<std::size_t>(efs_header.blob_size));

@@ -66,6 +66,7 @@ typedef struct ELFFS_NO_IMPLICIT_PADDING efs_header_s
     efs_size_t offset_to_blob;
     efs_size_t blob_size;
     efs_uid_t blob_version;
+    efs_uid_t marking;
 } efs_header_t;
 
 typedef struct ELFFS_NO_IMPLICIT_PADDING efs_entry_s

@@ -8,3 +8,5 @@
 
 add_library(libelffs_rt STATIC ${MASTR_INC}/elffs/rt/rt_manager.h rt_manager.c)
 target_link_libraries(libelffs_rt PUBLIC libelffs)
+
+install(TARGETS libelffs_rt DESTINATION lib)
