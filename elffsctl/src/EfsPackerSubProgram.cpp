@@ -16,6 +16,39 @@
 #include <fstream>
 #include <print>
 
+#ifdef ELFFS_ON_POSIX
+#include <sys/stat.h>
+#include <pwd.h>
+#endif
+
+
+static efs_uid_t getOwnerUid(const std::filesystem::path& path)
+{
+#ifdef ELFFS_ON_POSIX
+    struct stat info = {};
+
+    // 1. Get the folder status
+    if (stat(path.c_str(), &info) != 0)
+        throw std::runtime_error(std::format("::getOwnerUid Failed to stat folder \'{}\'", path));
+
+    // Extract the owner's UID
+    uid_t uid = info.st_uid;
+
+    // 2. Look up user details using the UID
+    passwd* pw = getpwuid(uid);
+    if (pw == NULL)
+        throw std::runtime_error("::getOwnerUid Failed to get username");
+
+    efs_uid_t owner = {};
+
+    efs_uid_from_string_hash(&owner, pw->pw_name);
+
+    return owner;
+#else
+    return {0, 0, 0}
+#endif
+}
+
 namespace fs = std::filesystem;
 static std::size_t get_entry_count(const fs::path& dir_path)
 {
@@ -37,6 +70,7 @@ void EfsPackerSubProgram::getFileBlob(std::vector<std::uint8_t>& fileblob, std::
     for (const auto& entry : std::filesystem::recursive_directory_iterator(dir))
     {
         efs_entry_t efs_entry = {};
+        std::memset(efs_entry.ext_unused, 0, EFS_ENTRY_EXT_SIZE);
         std::string name = std::format("/{}", std::filesystem::proximate(entry.path(), dir).string());
 
         if (name.size() >= EFS_ENTRY_PATH_MAX)
@@ -53,6 +87,19 @@ void EfsPackerSubProgram::getFileBlob(std::vector<std::uint8_t>& fileblob, std::
         {
             efs_entry.type = EFS_ENTRY_TYPE_CLUSTER;
             efs_entry.size = get_entry_count(entry.path());
+
+            efs_cluster_ext_data_t ext = {};
+            efs_uid_t owner = getOwnerUid(entry);
+
+            efs_uid_copy(&owner, &ext.owner);
+            ext.flags = 0;
+
+            ext.etext[0] = 't';
+            ext.etext[1] = 'r';
+            ext.etext[2] = 's';
+
+            std::memcpy(efs_entry.ext_unused, &ext, sizeof(efs_cluster_ext_data_t));
+
             entries.push_back(efs_entry);
             continue;
         }
@@ -60,6 +107,8 @@ void EfsPackerSubProgram::getFileBlob(std::vector<std::uint8_t>& fileblob, std::
         efs_entry.type = EFS_ENTRY_TYPE_BLOB;
         auto fsize = entry.file_size();
         efs_entry.size = fsize;
+
+
 
         if (entry.is_symlink())
         {

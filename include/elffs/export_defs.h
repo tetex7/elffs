@@ -38,9 +38,27 @@
 
 
 #if defined(_WIN32) || defined(__CYGWIN__)
-#   define ELFFS_NO_IMPLICIT_PADDING
+#   define ELFFS_NO_IMPLICIT_PADDING __declspec(align(1))
 #else
 #   define ELFFS_NO_IMPLICIT_PADDING __attribute__((packed))
 #endif
+
+#if defined(__clang__)
+#   define ELFFS_ON_CLANG 1
+#   define ELFFS_OVERLOAD __attribute__((overloadable)) __attribute__((always_inline)) static inline
+#endif
+
+#ifdef	__cplusplus
+#   define ELFFS_STATIC_ASSERT(expr, diagnostic) static_assert(expr, diagnostic)
+#else
+#   define ELFFS_STATIC_ASSERT(expr, diagnostic) \
+    extern int (*__ELFFS_STATIC_ASSERT_function (void)) \
+      [!!sizeof (struct { int __error_if_negative: (expr) ? 2 : -1; })]
+#endif
+
+#if defined(__unix__) || defined(__unix) || defined(__APPLE__)
+#   define ELFFS_ON_POSIX 1
+#endif
+
 
 #endif //LIBELFFS_EXPORT_DEFS_HPP

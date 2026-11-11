@@ -26,6 +26,8 @@ add_executable(elffsctl
         src/EfsObjectFileSubProgram.cpp
         include/EfsExtractSubProgram.hpp
         src/EfsExtractSubProgram.cpp
+        include/cli/ArgParser.hpp
+        src/cli/ArgParser.cpp
 )
 
 target_include_directories(elffsctl PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)

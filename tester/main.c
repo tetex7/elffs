@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
 {
     elffs_manager_o manager = elffs_get_global_manager();
 
-    FILE* f = elffs_manager_fopen(manager, "/dir/test.txt");
+    efsFile* f = elffs_manager_loadFile(manager, "/dir/test.txt");
 
     const efs_uid_o uid = elffs_manager_getUIDByFileName(manager, "/test44.txt");
 
@@ -36,11 +36,11 @@ int main(int argc, char* argv[])
 
     printf("uid = 0x%X\n", uid->full_bytes);
 
-    for (int c = fgetc(f); c != EOF; c = fgetc(f))
+    for (efs_fbyte_t c = efsFile_fgetc(f); c != EOF; c = efsFile_fgetc(f))
     {
         putchar(c);
     }
-    fclose(f);
+    efsFile_fclose(f);
 
     putchar('\n');
     putchar('\n');

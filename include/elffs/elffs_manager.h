@@ -16,6 +16,7 @@
 
 #include <stdio.h>
 #include <elffs/efs_types.h>
+#include <elffs/efsFile.h>
 
 ELFFS_BEGIN_CPP_COMPAT
 
@@ -42,8 +43,6 @@ typedef struct  elffs_file_mem_reference_s
 ELFFS_API elffs_manager_o elffs_manager_new(const uint8_t start[], const uint8_t end[]);
 ELFFS_API void elffs_manager_distroy(elffs_manager_o self);
 
-
-
 ELFFS_API efs_header_t* elffs_manager_getHeader(elffs_manager_o self);
 ELFFS_API const char* elffs_manager_getBlobName(elffs_manager_o self);
 ELFFS_API efs_size_t elffs_manager_getNumEntries(elffs_manager_o self);
@@ -55,6 +54,8 @@ ELFFS_API efs_size_t elffs_manager_getEntriesNameList(elffs_manager_o self, cons
 
 ELFFS_API FILE* elffs_manager_fopen(elffs_manager_o self, const char* filename);
 ELFFS_API efs_bool_t elffs_manager_openAsMemReference(elffs_manager_o self, const char* name, elffs_file_mem_reference_o memref_outref);
+
+ELFFS_API efsFile* elffs_manager_loadFile(elffs_manager_o self, const char* name);
 
 ELFFS_END_CPP_COMPAT
 

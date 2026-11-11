@@ -21,6 +21,9 @@ ELFFS_API efs_bool_t efs_mb_path_split(efs_path_lookup_pair_o out, const char* e
     if (strlen(efs_mb_path) > sizeof(efs_path_lookup_pair_t)-2)
         return false;
 
+    memset(out, 0, sizeof(efs_path_lookup_pair_t));
+
+
     efs_bool_t stag = false;
     char* blob = out->blob;
     char* path = out->path;
@@ -29,7 +32,7 @@ ELFFS_API efs_bool_t efs_mb_path_split(efs_path_lookup_pair_o out, const char* e
     {
         if (!stag)
         {
-            if (*c == ':' || *c == '@')
+            if (*c == ':')
             {
                 stag = true;
                 continue;

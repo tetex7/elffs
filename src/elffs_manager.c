@@ -13,6 +13,8 @@
 #include <stdio.h>
 #undef _POSIX_C_SOURCE
 
+#include <elffs/efsFile.h>
+
 #include <stdlib.h>
 #include <string.h>
 #include <elffs/elffs_manager.h>
@@ -34,10 +36,10 @@ ELFFS_API elffs_manager_o elffs_manager_new(const uint8_t start[], const uint8_t
         EFS_MAGIC_BYTE_3,
     };
 
-    char maz[EFS_MAGIC_LEN] = {0};
+    efs_byte_t maz[EFS_MAGIC_LEN] = {0};
     memcpy(maz, end, EFS_MAGIC_LEN);
 
-    if (memcmp(maz, currect, EFS_MAGIC_LEN) != 0)
+    if (efs_header_magic_check(&maz) == false)
     {
         return NULL;
     }
@@ -172,4 +174,35 @@ ELFFS_API efs_bool_t elffs_manager_openAsMemReference(elffs_manager_o self, cons
         }
     }
     return false;
+}
+
+static efs_result_t load_file_close_dtor(efsFile* file)
+{
+    if (file == NULL)
+        return EFS_RESULT_ERROR;
+    free(file);
+    return EFS_RESULT_SUCCESS;
+}
+
+ELFFS_API efsFile* elffs_manager_loadFile(elffs_manager_o self, const char* name)
+{
+    if (self == NULL || name == NULL)
+        return NULL;
+    elffs_file_mem_reference_t memfile = {NULL, NULL};
+
+    if (elffs_manager_openAsMemReference(self, name, &memfile) == false)
+        return NULL;
+
+    efsFile* file = malloc(sizeof(efsFile));
+    if (file == NULL)
+        return NULL;
+    memset(file, 0, sizeof(efsFile));
+    file->mode = EFS_FILE_READER_MEMORY;
+    file->close_dtor = &load_file_close_dtor;
+
+    file->data.memoryFile.position = 0;
+    file->data.memoryFile.size = memfile.size;
+
+    file->data.memoryFile.buffer = (const efs_byte_t(*)[])memfile.start;
+    return file;
 }

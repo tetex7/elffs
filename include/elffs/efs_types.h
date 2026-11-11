@@ -37,16 +37,6 @@ ELFFS_BEGIN_CPP_COMPAT
 
 #define EFS_CURRENT_VERSION (EFS_VERSION_1_UID)
 
-typedef struct ELFFS_NO_IMPLICIT_PADDING efs_elf_object_header_s
-{
-    uintptr_t efs_start;
-    uintptr_t efs_end;
-    uintptr_t header_start;
-    uintptr_t header_end;
-    uintptr_t entry_list_start;
-    uintptr_t entry_list_end;
-} efs_elf_object_header_t;
-
 enum efs_entry_type_e
 {
     EFS_ENTRY_TYPE_NONE = 0,
@@ -69,6 +59,10 @@ typedef struct ELFFS_NO_IMPLICIT_PADDING efs_header_s
     efs_uid_t marking;
 } efs_header_t;
 
+ELFFS_API efs_bool_t efs_header_magic_check(const efs_byte_t (*test_magic)[EFS_MAGIC_LEN]);
+
+#define EFS_ENTRY_EXT_SIZE (sizeof(efs_word_t)*8)
+
 typedef struct ELFFS_NO_IMPLICIT_PADDING efs_entry_s
 {
     char name[EFS_ENTRY_PATH_MAX];
@@ -76,7 +70,17 @@ typedef struct ELFFS_NO_IMPLICIT_PADDING efs_entry_s
     efs_uid_t uid;
     efs_size_t size;
     efs_size_t offset;
+    efs_byte_t ext_unused[EFS_ENTRY_EXT_SIZE];
 } efs_entry_t;
+
+typedef struct ELFFS_NO_IMPLICIT_PADDING efs_cluster_ext_data_s
+{
+    efs_uid_t owner;
+    efs_f8_t flags;
+    efs_byte_t etext[4];
+} efs_cluster_ext_data_t;
+
+ELFFS_STATIC_ASSERT(sizeof(efs_cluster_ext_data_t) < EFS_ENTRY_EXT_SIZE, "bad efs cluster ext data size");
 
 ELFFS_END_CPP_COMPAT
 

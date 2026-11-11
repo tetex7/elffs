@@ -22,26 +22,42 @@ typedef union ELFFS_NO_IMPLICIT_PADDING efs_uid_u
 {
     struct ELFFS_NO_IMPLICIT_PADDING
     {
-        uint8_t prefix;
-        uint16_t body;
-        uint8_t suffix;
+        efs_u8_t prefix;
+        efs_u16_t body;
+        efs_u8_t suffix;
     };
-    uint32_t full_bytes;
+    efs_u32_t full_bytes;
 } *efs_uid_o, efs_uid_t;
 
-//_Static_assert(sizeof(efs_uid_t) == sizeof(uint32_t), "efs_uid_t is same size as uint32_t");;
+ELFFS_STATIC_ASSERT(sizeof(efs_uid_t) == sizeof(efs_u32_t), "efs_uid_t is same size as uint32_t");;
 
-ELFFS_API bool efs_uid_from_ui32(efs_uid_o uid, uint32_t value);
+ELFFS_API efs_result_t efs_uid_create(efs_uid_o uid, efs_u8_t prefix, efs_u16_t body, efs_u8_t suffix);
 
-ELFFS_API bool efs_uid_cmp(efs_uid_o uid, efs_uid_o other);
+ELFFS_API efs_result_t efs_uid_from_u32(efs_uid_o uid, efs_u32_t value);
 
-ELFFS_API bool efs_uid_random(efs_uid_o uid);
+ELFFS_API efs_bool_t efs_uid_cmp(efs_uid_o uid, efs_uid_o other);
+
+ELFFS_API efs_result_t efs_uid_random(efs_uid_o uid);
 
 ELFFS_API efs_uid_o efs_uid_copy(efs_uid_o uid, efs_uid_o out);
 
 ELFFS_API efs_uid_o efs_uid_from_string_hash(efs_uid_o out, const char* string);
 
-ELFFS_API uint16_t efs_uid_as_string(char* buff, size_t len, efs_uid_o uid);
+ELFFS_API const char* efs_uid_as_string(char* buff, size_t len, efs_uid_o uid);
+
+#ifdef ELFFS_ON_CLANG
+ELFFS_API ELFFS_OVERLOAD
+efs_result_t efs_uid_create(efs_uid_o uid)
+{
+    return efs_uid_random(uid);
+}
+
+ELFFS_API ELFFS_OVERLOAD
+efs_result_t efs_uid_create(efs_uid_o uid, efs_u32_t full)
+{
+    return efs_uid_from_u32(uid, full);
+}
+#endif
 
 ELFFS_END_CPP_COMPAT
 

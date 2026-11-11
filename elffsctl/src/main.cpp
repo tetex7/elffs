@@ -27,15 +27,23 @@
 #include "ISubProgram.hpp"
 #include "InfoPack.hpp"
 #include "EfsExtractSubProgram.hpp"
+#include "cli/ArgParser.hpp"
 
 namespace po = boost::program_options;
 
 po::options_description desc("elffsctl Options");
 
-int prog(int argc, char* argv[])
+int prog(int argc, const char* argv[])
 {
     InfoPack info_pack;
 
+    cli::StreamLikeCliArgReader test = {argc, argv};
+
+    while (test.hasNext())
+    {
+        auto& temp = test.next();
+        std::println("{}", temp);
+    }
 
     desc.add_options()
         ("help,h", "Show help message")
@@ -118,7 +126,7 @@ int prog(int argc, char* argv[])
 }
 
 
-int main(int argc, char *argv[])
+int main(int argc, const char* argv[])
 {
     try
     {

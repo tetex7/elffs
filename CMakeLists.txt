@@ -60,6 +60,11 @@ add_library(libelffs SHARED
         src/elffs_manager.c
         include/elffs/efs_path_utils.h
         src/efs_path_utils.c
+        include/elffs/efs_streaming_manager.h
+        src/efs_streaming_manager.c
+        include/elffs/efs_mb_defs.h
+        include/elffs/efsFile.h
+        src/efsFile.c
 )
 enable_api_ctl(libelffs)
 target_compile_definitions(libelffs PRIVATE ELFFS_EXPORTS)
@@ -68,10 +73,13 @@ target_compile_features(libelffs PUBLIC c_std_99)
 
 install(TARGETS libelffs DESTINATION lib)
 
-add_subdirectory(elffsctl)
-#target_include_directories(elffsctl PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 add_subdirectory(rt)
-add_subdirectory(tester)
+
+if (NOT LIBELFFS_ONLY)
+    add_subdirectory(elffsctl)
+#target_include_directories(elffsctl PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+    add_subdirectory(tester)
+endif ()
 
 
 # --- CPack Configuration ---
